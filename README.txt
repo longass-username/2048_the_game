@@ -1,0 +1,1 @@
+Simple realization of game "2048" using Python3 and PyQt5.
