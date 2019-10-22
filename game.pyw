@@ -11,6 +11,7 @@ class Window(QMainWindow):
     def __init__(self):
         # noinspection PyArgumentList
         super().__init__()
+        self.init_menu_bar()
 
         self.board = Board(self)
         self.setCentralWidget(self.board)
@@ -18,9 +19,87 @@ class Window(QMainWindow):
         self.statusbar = self.statusBar()
         self.board.statusbar_msg[str].connect(self.statusbar.showMessage)
 
-        self.setFixedSize(400, 400)
+        self.setFixedSize(400, 435)
         self.setWindowTitle('2048')
         self.show()
+
+    def init_menu_bar(self):
+        def three_mode_change():
+            self.board.field_format = 3
+            self.board.font_weight = 100
+            self.board.font_size = 27
+            self.board.setup_vars()
+
+        def four_mode_change():
+            self.board.field_format = 4
+            self.board.font_weight = 90
+            self.board.font_size = 20
+            self.board.setup_vars()
+
+        def five_mode_change():
+            self.board.field_format = 5
+            self.board.font_weight = 80
+            self.board.font_size = 17
+            self.board.setup_vars()
+
+        def six_mode_change():
+            self.board.field_format = 6
+            self.board.font_weight = 70
+            self.board.font_size = 15
+            self.board.setup_vars()
+
+        def seven_mode_change():
+            self.board.field_format = 7
+            self.board.font_weight = 60
+            self.board.font_size = 12
+            self.board.setup_vars()
+
+        def eight_mode_change():
+            self.board.field_format = 8
+            self.board.font_weight = 50
+            self.board.font_size = 10
+            self.board.setup_vars()
+
+        def nine_mode_change():
+            self.board.field_format = 9
+            self.board.font_weight = 60
+            self.board.font_size = 7
+            self.board.setup_vars()
+
+        def ten_mode_change():
+            self.board.field_format = 10
+            self.board.font_weight = 60
+            self.board.font_size = 7
+            self.board.setup_vars()
+
+        three_mode = QAction('3x3', self)
+        three_mode.triggered.connect(three_mode_change)
+        four_mode = QAction('4x4', self)
+        four_mode.triggered.connect(four_mode_change)
+
+        five_mode = QAction('5x5', self)
+        five_mode.triggered.connect(five_mode_change)
+        six_mode = QAction('6x6', self)
+        six_mode.triggered.connect(six_mode_change)
+        seven_mode = QAction('7x7', self)
+        seven_mode.triggered.connect(seven_mode_change)
+        eight_mode = QAction('8x8', self)
+        eight_mode.triggered.connect(eight_mode_change)
+        nine_mode = QAction('9x9', self)
+        nine_mode.triggered.connect(nine_mode_change)
+        ten_mode = QAction('10x10', self)
+        ten_mode.triggered.connect(ten_mode_change)
+
+        menu_bar = self.menuBar()
+        grid_change = menu_bar.addMenu('Map size')
+        grid_change.addAction(three_mode)
+        grid_change.addAction(four_mode)
+        grid_change.addAction(five_mode)
+        grid_change.addAction(six_mode)
+        grid_change.addAction(seven_mode)
+        grid_change.addAction(eight_mode)
+        grid_change.addAction(nine_mode)
+        grid_change.addAction(ten_mode)
 
 
 class Board(QFrame):
@@ -39,6 +118,9 @@ class Board(QFrame):
     color_of_cell: Dict[Union[str, Any], Union[int, Any]]
 
     statusbar_msg = pyqtSignal(str)
+    field_format = 4
+    font_weight = 90
+    font_size = 20
 
     def __init__(self, parent):
         # noinspection PyArgumentList
@@ -51,7 +133,7 @@ class Board(QFrame):
         self.spacer = 3
         self.max_val = 2048
         self.can_move = True
-        self.field_format = 4  # this var defines number of rows and columns
+        # self.field_format = 4  # this var defines number of rows and columns
 
         self.color_of_cell = {
             '2': 0x666699,
@@ -177,7 +259,7 @@ class Board(QFrame):
                          color)
 
         painter.setPen(QColor(0x262626))
-        painter.setFont(QFont('Decorative', 25))
+        painter.setFont(QFont('Decorative', self.font_size, self.font_weight))
         painter.drawText(QRect(QPoint(y, x), QSize(self.square_height(), self.square_width())),
                          Qt.AlignCenter,
                          number)
@@ -232,7 +314,9 @@ class Board(QFrame):
 
     def repeat_msg_box(self):
         reply = QMessageBox.question(self, 'Message',
-                                     "-----GAME OVER-----\n\nYour score - {}\nDo you want to replay?".format(self.score), QMessageBox.Yes |
+                                     "-----GAME OVER-----\n\n"
+                                     "Your score - {}\n"
+                                     "Do you want to replay?".format(self.score), QMessageBox.Yes |
                                      QMessageBox.No, QMessageBox.Yes)
 
         if reply == QMessageBox.Yes:
